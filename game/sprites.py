@@ -13,6 +13,8 @@ class Bird(pygame.sprite.Sprite):
         self.max_dy = 14
         self.min_dy = -30
         self.image = pygame.Surface([20, 20])
+        self.image = pygame.image.load("images/bird.png")
+        self.image = pygame.transform.scale(self.image, (64, 64))
         self.color = pygame.Color(255, 0, 0)
 
     def jump(self):
@@ -32,7 +34,5 @@ class Bird(pygame.sprite.Sprite):
         elif self.dy < self.min_dy:
             self.dy = self.min_dy
 
-        print(self.dy)
         self.y = self.y + self.dy
-        pygame.draw.rect(surface, self.color,
-                         self.image.get_rect(topleft=(self.x, self.y)))
+        surface.blit(self.image, (self.x, self.y))
