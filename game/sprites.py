@@ -33,6 +33,6 @@ class Bird(pygame.sprite.Sprite):
             self.dy = self.max_dy
         elif self.dy < self.min_dy:
             self.dy = self.min_dy
-
+        print(self.y)
         self.y = self.y + self.dy
         surface.blit(self.image, (self.x, self.y))
