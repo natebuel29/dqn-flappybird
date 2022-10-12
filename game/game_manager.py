@@ -1,5 +1,5 @@
 import pygame
-from sprites import Bird
+from sprites import Bird, Pipe
 
 
 class FlappyBirdGameManager:
@@ -15,6 +15,7 @@ class FlappyBirdGameManager:
         self.clock = pygame.time.Clock()
         self.bird = Bird()
         self.should_jump = False
+        self.pipe = Pipe(None, None, True)
 
     def reset(self):
         pass
@@ -22,6 +23,7 @@ class FlappyBirdGameManager:
     def draw_sprites(self):
         self.background.fill((0, 0, 187))
         self.bird.draw(self.background, should_jump=self.should_jump)
+        self.pipe.draw(self.background)
         self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
