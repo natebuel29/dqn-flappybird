@@ -1,1 +1,1 @@
-# dqn-flappybird
+# Deep Q Network Flappy Bird
