@@ -1,15 +1,16 @@
 import pygame
 import numpy as np
+import random
 
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.jump_force = 40
+        self.jump_force = 35
         self.x = 50
         self.y = 250
         self.dy = -30
-        self.down_gravity = 5
+        self.down_gravity = 4
         self.max_dy = 14
         self.min_dy = -30
         self.image = pygame.image.load("images/bird.png")
@@ -22,30 +23,32 @@ class Bird(pygame.sprite.Sprite):
     def gravity(self):
         self.dy += self.down_gravity
 
-    def draw(self, surface, should_jump):
+    def update(self, should_jump):
         if should_jump:
             self.jump()
         else:
             self.gravity()
-
         if self.dy > self.max_dy:
             self.dy = self.max_dy
         elif self.dy < self.min_dy:
             self.dy = self.min_dy
+
+    def draw(self, surface):
         self.y = self.y + self.dy
         surface.blit(self.image, (self.x, self.y))
 
 
 class Pipe(pygame.sprite.Sprite):
-    def __init__(self, x, gap, is_top):
+    def __init__(self, x, height, is_top):
         self.body = pygame.image.load("images/pipe_body.png")
         self.head = pygame.image.load("images/pipe_head.png")
-        self.x = 250
+        self.x = 400
+        self.dx = 6
         if is_top:
             self.y = 0
         else:
             self.y = 512
-        self.height = 200
+        self.height = height
         self.width = 64
         self.offset = 10
         self.body = pygame.transform.scale(
@@ -55,14 +58,40 @@ class Pipe(pygame.sprite.Sprite):
         self.is_top = is_top
 
     def update(self):
-        pass
+        self.x -= self.dx
 
     def draw(self, surface):
         if self.is_top:
             surface.blit(self.body, (self.x, self.y))
-            print(self.y)
             surface.blit(self.head, (self.x - 5, self.height))
         else:
             surface.blit(self.body, (self.x, self.y - self.height+16))
             surface.blit(
                 self.head, (self.x - self.offset/2, self.y-self.height))
+
+
+class PipePair(pygame.sprite.Sprite):
+    def __init__(self, surface_height, surface_width):
+        self.surface_height = surface_height
+        self.surface_width = surface_width
+        self.gap = 150
+        self.min_distance = 60
+        self.bottom_height = random.randint(
+            self.min_distance, self.surface_height-self.min_distance - self.gap)
+        self.top_height = self.surface_height - self.bottom_height - self.gap
+        self.top_pipe = Pipe(self.surface_width, self.top_height, True)
+        self.bottom_pipe = Pipe(self.surface_width, self.bottom_height, False)
+
+    def update(self):
+        self.top_pipe.update()
+        self.bottom_pipe.update()
+
+    def draw(self, surface):
+        self.top_pipe.draw(surface)
+        self.bottom_pipe.draw(surface)
+
+    def set_pipe_heights(self):
+        pass
+
+    def collision(self, bird):
+        pass
