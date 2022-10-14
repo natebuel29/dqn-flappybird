@@ -14,7 +14,9 @@ class FlappyBirdGameManager:
         self.background.fill((0, 0, 187))
         self.clock = pygame.time.Clock()
         self.bird = Bird()
-        self.pipe_pair = PipePair(self.height, self.width)
+        self.pipe_pair_one = PipePair(self.height, self.width, self.width)
+        self.pipe_pair_two = PipePair(
+            self.height, self.width, self.width + 200)
 
     def reset(self):
         pass
@@ -22,7 +24,8 @@ class FlappyBirdGameManager:
     def draw_sprites(self):
         self.background.fill((0, 0, 187))
         self.bird.draw(self.background)
-        self.pipe_pair.draw(self.background)
+        self.pipe_pair_one.draw(self.background)
+        self.pipe_pair_two.draw(self.background)
         self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
@@ -48,7 +51,8 @@ class FlappyBirdGameManager:
                 if event.key == pygame.K_SPACE:
                     should_jump = True
         self.bird.update(should_jump)
-        self.pipe_pair.update()
+        self.pipe_pair_one.update()
+        self.pipe_pair_two.update()
 
     def run(self):
         while True:

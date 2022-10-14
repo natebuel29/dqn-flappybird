@@ -6,16 +6,17 @@ import random
 class Bird(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.jump_force = 35
+        self.jump_force = 32
         self.x = 50
         self.y = 250
         self.dy = -30
         self.down_gravity = 4
         self.max_dy = 14
-        self.min_dy = -30
+        self.min_dy = -25
         self.image = pygame.image.load("images/bird.png")
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.color = pygame.Color(255, 0, 0)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def jump(self):
         self.dy -= self.jump_force
@@ -42,7 +43,7 @@ class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, height, is_top):
         self.body = pygame.image.load("images/pipe_body.png")
         self.head = pygame.image.load("images/pipe_head.png")
-        self.x = 400
+        self.x = x
         self.dx = 6
         if is_top:
             self.y = 0
@@ -56,9 +57,11 @@ class Pipe(pygame.sprite.Sprite):
         self.head = pygame.transform.scale(
             self.head, (self.width+self.offset, 32))
         self.is_top = is_top
+        self.mask = pygame.mask.from_surface(self.body)
 
     def update(self):
         self.x -= self.dx
+        self.rect = self.body.get_rect()
 
     def draw(self, surface):
         if self.is_top:
@@ -71,27 +74,33 @@ class Pipe(pygame.sprite.Sprite):
 
 
 class PipePair(pygame.sprite.Sprite):
-    def __init__(self, surface_height, surface_width):
+    def __init__(self, surface_height, surface_width, starting_x):
+        self.starting_x = starting_x
         self.surface_height = surface_height
         self.surface_width = surface_width
         self.gap = 150
         self.min_distance = 60
-        self.bottom_height = random.randint(
-            self.min_distance, self.surface_height-self.min_distance - self.gap)
-        self.top_height = self.surface_height - self.bottom_height - self.gap
-        self.top_pipe = Pipe(self.surface_width, self.top_height, True)
-        self.bottom_pipe = Pipe(self.surface_width, self.bottom_height, False)
+        self.create_pipes(starting_x)
 
     def update(self):
         self.top_pipe.update()
         self.bottom_pipe.update()
+        if self.is_off_screen():
+            self.create_pipes(self.surface_width)
 
     def draw(self, surface):
         self.top_pipe.draw(surface)
         self.bottom_pipe.draw(surface)
 
-    def set_pipe_heights(self):
-        pass
+    def create_pipes(self, x):
+        self.bottom_height = random.randint(
+            self.min_distance, self.surface_height-self.min_distance - self.gap)
+        self.top_height = self.surface_height - self.bottom_height - self.gap
+        self.top_pipe = Pipe(x, self.top_height, True)
+        self.bottom_pipe = Pipe(x, self.bottom_height, False)
+
+    def is_off_screen(self):
+        return self.top_pipe.x < 0 - self.top_pipe.width and self.bottom_pipe.x < 0 - self.bottom_pipe.width
 
     def collision(self, bird):
         pass
