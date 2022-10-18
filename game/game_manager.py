@@ -1,5 +1,5 @@
 import pygame
-from sprites import Bird
+from sprites import Bird, Pipe, PipePair
 
 
 class FlappyBirdGameManager:
@@ -14,14 +14,18 @@ class FlappyBirdGameManager:
         self.background.fill((0, 0, 187))
         self.clock = pygame.time.Clock()
         self.bird = Bird()
-        self.should_jump = False
+        self.pipe_pair_one = PipePair(self.height, self.width, self.width)
+        self.pipe_pair_two = PipePair(
+            self.height, self.width, self.width + 200)
 
     def reset(self):
         pass
 
     def draw_sprites(self):
         self.background.fill((0, 0, 187))
-        self.bird.draw(self.background, should_jump=self.should_jump)
+        self.bird.draw(self.background)
+        self.pipe_pair_one.draw(self.background)
+        self.pipe_pair_two.draw(self.background)
         self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
@@ -45,14 +49,15 @@ class FlappyBirdGameManager:
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.should_jump = True
-
-    def post_update(self):
-        self.should_jump = False
+                    should_jump = True
+        self.bird.update(should_jump)
+        self.pipe_pair_one.update()
+        self.pipe_pair_two.update()
+        if self.pipe_pair_one.collision(self.bird) or self.pipe_pair_two.collision(self.bird):
+            print("yoo collision dumby")
 
     def run(self):
         while True:
             self.clock.tick(self.fps)
             self.update()
             self.draw_sprites()
-            self.post_update()
