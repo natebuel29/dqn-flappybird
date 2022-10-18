@@ -43,7 +43,6 @@ class Bird(pygame.sprite.Sprite):
                                 self.rect_side, self.rect_side)
 
     def draw(self, surface):
-        pygame.draw.rect(surface, pygame.Color(255, 0, 0), self.rect)
         surface.blit(self.image, (self.x, self.y))
 
 
@@ -117,6 +116,12 @@ class PipePair(pygame.sprite.Sprite):
 
     def is_off_screen(self):
         return self.top_pipe.x < 0 - self.top_pipe.width and self.bottom_pipe.x < 0 - self.bottom_pipe.width
+
+    def passed_bird(self, bird):
+        if bird.x - self.top_pipe.dx < self.top_pipe.x <= bird.x:
+            return True
+        else:
+            return False
 
     def collision(self, bird):
         if pygame.sprite.collide_mask(self.top_pipe, bird):
