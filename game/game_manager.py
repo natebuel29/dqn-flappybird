@@ -53,6 +53,8 @@ class FlappyBirdGameManager:
         self.bird.update(should_jump)
         self.pipe_pair_one.update()
         self.pipe_pair_two.update()
+        if self.pipe_pair_one.collision(self.bird) or self.pipe_pair_two.collision(self.bird):
+            print("yoo collision dumby")
 
     def run(self):
         while True:

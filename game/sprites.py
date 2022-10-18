@@ -15,6 +15,11 @@ class Bird(pygame.sprite.Sprite):
         self.min_dy = -25
         self.image = pygame.image.load("images/bird.png")
         self.image = pygame.transform.scale(self.image, (64, 64))
+        self.x_offset = 15
+        self.y_offset = 18
+        self.rect_side = 25
+        self.rect = pygame.Rect(self.x + self.x_offset, self.y+self.y_offset,
+                                self.rect_side, self.rect_side)
         self.color = pygame.Color(255, 0, 0)
         self.mask = pygame.mask.from_surface(self.image)
 
@@ -33,15 +38,18 @@ class Bird(pygame.sprite.Sprite):
             self.dy = self.max_dy
         elif self.dy < self.min_dy:
             self.dy = self.min_dy
+        self.y = self.y + self.dy
+        self.rect = pygame.Rect(self.x + self.x_offset, self.y+self.y_offset,
+                                self.rect_side, self.rect_side)
 
     def draw(self, surface):
-        self.y = self.y + self.dy
+        pygame.draw.rect(surface, pygame.Color(255, 0, 0), self.rect)
         surface.blit(self.image, (self.x, self.y))
 
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, height, is_top):
-        self.body = pygame.image.load("images/pipe_body.png")
+        self.image = pygame.image.load("images/pipe_body.png")
         self.head = pygame.image.load("images/pipe_head.png")
         self.x = x
         self.dx = 6
@@ -52,23 +60,31 @@ class Pipe(pygame.sprite.Sprite):
         self.height = height
         self.width = 64
         self.offset = 10
-        self.body = pygame.transform.scale(
-            self.body, (self.width, self.height))
+        self.image = pygame.transform.scale(
+            self.image, (self.width, self.height))
         self.head = pygame.transform.scale(
             self.head, (self.width+self.offset, 32))
+        self.head_rect = self.head.get_rect()
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.is_top = is_top
-        self.mask = pygame.mask.from_surface(self.body)
+
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         self.x -= self.dx
-        self.rect = self.body.get_rect()
 
     def draw(self, surface):
         if self.is_top:
-            surface.blit(self.body, (self.x, self.y))
-            surface.blit(self.head, (self.x - 5, self.height))
+            surface.blit(self.image, (self.x, self.y))
+            self.rect = pygame.Rect(
+                self.x, self.y, self.width, self.height)
+            surface.blit(
+                self.head, (self.x - 5, self.height-self.head_rect[3]))
+
         else:
-            surface.blit(self.body, (self.x, self.y - self.height+16))
+            surface.blit(self.image, (self.x, self.y - self.height))
+            self.rect = pygame.Rect(
+                self.x, self.y - self.height+16, self.width, self.height)
             surface.blit(
                 self.head, (self.x - self.offset/2, self.y-self.height))
 
@@ -78,7 +94,7 @@ class PipePair(pygame.sprite.Sprite):
         self.starting_x = starting_x
         self.surface_height = surface_height
         self.surface_width = surface_width
-        self.gap = 150
+        self.gap = 125
         self.min_distance = 60
         self.create_pipes(starting_x)
 
@@ -103,4 +119,9 @@ class PipePair(pygame.sprite.Sprite):
         return self.top_pipe.x < 0 - self.top_pipe.width and self.bottom_pipe.x < 0 - self.bottom_pipe.width
 
     def collision(self, bird):
-        pass
+        if pygame.sprite.collide_mask(self.top_pipe, bird):
+            return True
+        elif pygame.sprite.collide_mask(self.bottom_pipe, bird):
+            return True
+        else:
+            return False
