@@ -9,7 +9,10 @@ class FlappyBirdGameManager:
         self.width = 320
         self.screen = screen
         pygame.display.set_caption("Flappy Bird")
-        self.background = pygame.Surface(screen.get_size())
+        self.reset()
+
+    def reset(self):
+        self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((0, 0, 187))
         self.clock = pygame.time.Clock()
@@ -18,9 +21,7 @@ class FlappyBirdGameManager:
         self.pipe_pair_two = PipePair(
             self.height, self.width, self.width + 200)
         self.score = 0
-
-    def reset(self):
-        pass
+        self.playing = True
 
     def draw_sprites(self):
         self.background.fill((0, 0, 187))
@@ -46,7 +47,16 @@ class FlappyBirdGameManager:
         pass
 
     def game_over(self):
-        pass
+        self.playing = False
+        self.reset()
+
+    def is_game_over(self):
+        if self.pipe_pair_one.collision(self.bird) or self.pipe_pair_two.collision(self.bird):
+            return True
+        elif self.bird.y + 64 < 0 or self.bird.y > self.height:
+            return True
+        else:
+            return False
 
     def pause(self):
         pass
@@ -64,11 +74,12 @@ class FlappyBirdGameManager:
         self.pipe_pair_one.update()
         self.pipe_pair_two.update()
         self.update_score()
-        if self.pipe_pair_one.collision(self.bird) or self.pipe_pair_two.collision(self.bird):
+        if self.is_game_over():
             print("yoo collision dumby")
+            self.game_over()
 
     def run(self):
-        while True:
+        while self.playing:
             self.clock.tick(self.fps)
             self.update()
             self.draw_sprites()

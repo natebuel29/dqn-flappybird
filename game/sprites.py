@@ -17,7 +17,7 @@ class Bird(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.x_offset = 15
         self.y_offset = 18
-        self.rect_side = 25
+        self.rect_side = 24
         self.rect = pygame.Rect(self.x + self.x_offset, self.y+self.y_offset,
                                 self.rect_side, self.rect_side)
         self.color = pygame.Color(255, 0, 0)
