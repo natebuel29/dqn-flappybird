@@ -13,7 +13,7 @@ class DQN:
         self.model.add(Conv2D(filters=64, kernel_size=3,
                        strides=1, activation="relu"))
         self.model.add(Flatten())
-        self.model.add(Dense(1, activation="sigmoid"))
+        self.model.add(Dense(number_of_actions, activation="sigmoid"))
 
     def forward(self, x):
-        self.model.predict(x)
+        return self.model.predict(x)
