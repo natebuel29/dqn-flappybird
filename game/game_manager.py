@@ -44,6 +44,7 @@ class FlappyBirdGameManager:
             self.score += 1
 
     def get_game_state(self):
+        # TODO: Game Manager will keep track of last three frames?
         pass
 
     def game_over(self):
