@@ -16,4 +16,4 @@ class DQN:
         self.model.add(Dense(number_of_actions, activation="sigmoid"))
 
     def forward(self, x):
-        return self.model.predict(x)
+        return self.model.predict(x, batch_size=1)
