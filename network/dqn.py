@@ -15,5 +15,9 @@ class DQN:
         self.model.add(Flatten())
         self.model.add(Dense(number_of_actions, activation="sigmoid"))
 
+        self.model.compile(loss='mean_squared_error',
+                           optimizer='rmsprop',
+                           metrics=['accuracy'])
+
     def forward(self, x):
         return self.model.predict(x, batch_size=1)

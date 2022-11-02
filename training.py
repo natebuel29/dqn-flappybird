@@ -17,6 +17,7 @@ epsilon = 0.99
 decay_rate = 0.001
 epsilon_min = 0.02
 training = True
+C = 1000
 game_manager = FlappyBirdGameManager(screen)
 while training:
     game_manager.reset()
@@ -31,3 +32,13 @@ while training:
         else:
             q_values = action_network.forward(current_state)
             action = np.argmax(q_values)
+
+        #reward,is_done = game_manager.play_step(action)
+        #new_obs = game_manager.get_screen()
+        #new_state = [current_state[1:],new_obs]
+        # buffer.append({
+        # "current_state",current_state,
+        # "action",action,
+        # "reward",reward,
+        # "next_state",next_state
+        # })
