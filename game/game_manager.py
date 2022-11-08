@@ -5,8 +5,8 @@ from sprites import Bird, Pipe, PipePair
 class FlappyBirdGameManager:
     def __init__(self, screen):
         self.fps = 30
-        self.height = 512
-        self.width = 320
+        self.height = screen.get_height()
+        self.width = screen.get_width()
         self.screen = screen
         pygame.display.set_caption("Flappy Bird")
         self.reset()
@@ -44,6 +44,8 @@ class FlappyBirdGameManager:
             self.score += 1
 
     def get_game_state(self):
+        # TODO: Game Manager will keep track of last three frames?
+        # TODO: initial state will be three of the same frames that will be updated?
         pass
 
     def game_over(self):
@@ -60,6 +62,9 @@ class FlappyBirdGameManager:
 
     def pause(self):
         pass
+
+    def get_screen(self):
+        return pygame.surfarray.array3d(pygame.display.get_surface())
 
     def update(self):
         should_jump = False
